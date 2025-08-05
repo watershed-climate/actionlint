@@ -86,6 +86,11 @@ func (rule *RuleWorkflowRun) workflowSeen(node *Workflow) {
 func (rule *RuleWorkflowRun) workflowReferenced(path string, refAt *String) {
 	rule.Debug("workflowReferenced: %q\n", refAt.Value)
 
+	// '*' is a special keyword in GitHub Actions workflow_run that matches all workflows
+	if refAt.Value == "*" {
+		return
+	}
+
 	rule.mutex.Lock()
 	defer rule.mutex.Unlock()
 

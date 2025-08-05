@@ -36,6 +36,15 @@ func TestRuleWorkflowRunCheck(t *testing.T) {
 				{Value: "A Workflow", Pos: pos},
 			}}},
 	}
+	w4 := &Workflow{
+		Path: "repo/w4.yml",
+		Name: &String{Value: "wildcardWorkflow", Pos: &Pos{1, 1}},
+		On: []Event{&WebhookEvent{
+			Hook: &String{Value: "workflow_run"},
+			Workflows: []*String{
+				{Value: "*", Pos: pos},
+			}}},
+	}
 
 	tests := []struct {
 		name       string
@@ -49,6 +58,8 @@ func TestRuleWorkflowRunCheck(t *testing.T) {
 		{"w1 and w3", []*Workflow{w1, w3}, expectErr(expectedErr{"repo/w3.yml", []*Workflow{w2}})},
 		{"w2 and w3", []*Workflow{w2, w3}, expectErr(expectedErr{"repo/w3.yml", []*Workflow{w1}})},
 		{"all", []*Workflow{w1, w2, w3}, expectErr()},
+		{"wildcard workflow", []*Workflow{w4}, expectErr()},
+		{"wildcard with others", []*Workflow{w1, w2, w4}, expectErr()},
 	}
 
 	for _, tc := range tests {
