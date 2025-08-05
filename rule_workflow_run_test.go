@@ -1,8 +1,10 @@
 package actionlint
 
 import (
-	"reflect"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 )
 
 func TestRuleWorkflowRunCheck(t *testing.T) {
@@ -78,8 +80,10 @@ func TestRuleWorkflowRunCheck(t *testing.T) {
 			}
 			for key, expected := range tc.expectErrs {
 				actual := errs[key]
-				if !reflect.DeepEqual(expected, actual) {
-					t.Fatalf("Errors does not match:\nWanted: %v\nBut have: %v", expected, actual)
+				// Use go-cmp with SortSlices to compare slices without depending on order
+				less := func(a, b *Error) bool { return a.Message < b.Message }
+				if diff := cmp.Diff(expected, actual, cmpopts.SortSlices(less)); diff != "" {
+					t.Fatalf("Errors mismatch for path %q (-want +got):\n%s", key, diff)
 				}
 			}
 		})
