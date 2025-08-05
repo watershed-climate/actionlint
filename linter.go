@@ -400,6 +400,9 @@ func (l *Linter) LintFiles(filepaths []string, project *Project) ([]*Error, erro
 	rwErrs := rwrst.ComputeMissingReferences()
 	for i := range ws {
 		w := &ws[i]
+		for _, err := range rwErrs[w.path] {
+			err.Filepath = w.path
+		}
 		w.errs = append(w.errs, rwErrs[w.path]...)
 	}
 
