@@ -2565,7 +2565,7 @@ as `{version: string}`. In the downstream job, actionlint can report an error at
 
 Note that this check only works with local reusable workflow (starting with `./`).
 
-<a id="check-workflow-run-refss"></a>
+<a id="check-workflow-run-refs"></a>
 ## Workflows references at `workflow_run`
 [`workflow_run` is a trigger event](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_run) to run a workflow when another workflow is completed. 
 
@@ -2594,16 +2594,18 @@ on:
 Output:
 
 ```
-:6:9: Workflow "test" is not defined [workflow_run]
+test.yaml:2:1: "jobs" section is missing in workflow [syntax-check]
   |
-6 |       - test # ERROR: This workflow does not exist, its name is `Tests`
-  |         ^~~~
+2 | on: push
+  | ^~~
 ```
+
+<!-- Skip playground link -->
 
 > [!NOTE]
 > This check only applies when all workflow files are analyzed together
 
-<a name="id-naming-convention"></a>
+<a id="check-id-naming-convention"></a>
 ## ID naming convention
 
 Example input:
